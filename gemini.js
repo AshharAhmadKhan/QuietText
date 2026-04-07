@@ -3,10 +3,17 @@
 // Called only from background.js. No backend. No proxy.
 
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
-const DEFAULT_API_KEY = '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';
+
+// Users must add their own Groq API key in the extension settings
+// Get a free key at: https://console.groq.com
+const DEFAULT_API_KEY = ''; // Enter your API key here
 
 async function callGemini(systemPrompt, userText, apiKey) {
   const key = apiKey || DEFAULT_API_KEY;
+  
+  if (!key) {
+    throw new Error('Please add your Groq API key in the extension settings (Settings tab).');
+  }
 
   const body = {
     model: 'llama-3.1-8b-instant',
