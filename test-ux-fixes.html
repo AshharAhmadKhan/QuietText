@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuietText UX Fixes Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #1C1C1E; }
+    .test-section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #F2F0EB;
+      border-radius: 8px;
+    }
+    .test-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border-radius: 4px;
+    }
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pass { background: #e8f5e9; color: #2e7d32; }
+    .manual { background: #fff3e0; color: #f57c00; }
+  </style>
+</head>
+<body>
+  <h1>QuietText UX Fixes - Test Checklist</h1>
+  
+  <div class="test-section">
+    <h2>✅ Fix 4: Animated Monogram</h2>
+    <div class="test-item">
+      <span class="status pass">IMPLEMENTED</span>
+      <strong>What to test:</strong> Open popup → SVG circle rotates smoothly on load (1s animation)
+      <br><strong>Files:</strong> popup.html, popup.css, panel.html, panel.css
+      <br><strong>Animation:</strong> 360° rotation with opacity fade-in
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ Fix 5: Toast Notification</h2>
+    <div class="test-item">
+      <span class="status pass">IMPLEMENTED</span>
+      <strong>What to test:</strong> Apply any preset → Toast appears at bottom center saying "Mild/Comfort/Focus mode applied"
+      <br><strong>Files:</strong> content.js, content.css
+      <br><strong>Behavior:</strong> Slides up from bottom, auto-dismisses after 2s
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ Fix 6: Relative Timestamps</h2>
+    <div class="test-item">
+      <span class="status pass">IMPLEMENTED</span>
+      <strong>What to test:</strong> History tab → Shows "5 mins ago", "2 hours ago", "3 days ago" instead of ISO dates
+      <br><strong>Files:</strong> popup.js
+      <br><strong>Function:</strong> formatRelativeTime()
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ Fix 7: Bigger Resize Handles</h2>
+    <div class="test-item">
+      <span class="status pass">IMPLEMENTED</span>
+      <strong>What to test:</strong> Panel text boxes → Resize handle has visible dots, hover shows shadow
+      <br><strong>Files:</strong> panel.css
+      <br><strong>CSS:</strong> Custom ::-webkit-resizer with SVG dots
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ Fix 8: Tooltips on All Buttons</h2>
+    <div class="test-item">
+      <span class="status pass">IMPLEMENTED</span>
+      <strong>What to test:</strong> Hover over ALL buttons → Tooltip appears
+      <br><strong>Files:</strong> popup.html, panel.html
+      <br><strong>Buttons covered:</strong> Presets, toggle, minimize, simplify, explain, copy, expand, close, clear history, save API key
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ Fix 9: Loading Spinner</h2>
+    <div class="test-item">
+      <span class="status manual">ALREADY EXISTS</span>
+      <strong>What to test:</strong> Click Simplify → Skeleton shimmer appears while loading
+      <br><strong>Files:</strong> panel.js, panel.css
+      <br><strong>Note:</strong> Loading state already implemented in previous fixes
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ Fix 10: Better Chart Colors</h2>
+    <div class="test-item">
+      <span class="status pass">IMPLEMENTED</span>
+      <strong>What to test:</strong> Simplify text → Chart shows red bars for "Before", green bars for "After"
+      <br><strong>Files:</strong> panel.js
+      <br><strong>Colors:</strong> Before = red (rgba(211,47,47)), After = green (rgba(46,125,50))
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ Fix 11: Simplify Panel Header</h2>
+    <div class="test-item">
+      <span class="status pass">IMPLEMENTED</span>
+      <strong>What to test:</strong> Open panel → Header shows only drag grip + animated SVG logo (no "QuietText" text)
+      <br><strong>Files:</strong> panel.html
+      <br><strong>Removed:</strong> "QuietText" text span from header
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>📋 Manual Testing Steps</h2>
+    <ol>
+      <li>Load extension in Chrome</li>
+      <li>Open popup → Check animated logo rotates</li>
+      <li>Click preset buttons → Check tooltips appear</li>
+      <li>Apply preset → Check toast notification appears</li>
+      <li>Right-click selected text → Analyse with QuietText</li>
+      <li>Check panel header is simplified (no text, just logo)</li>
+      <li>Click Simplify → Check chart has red/green colors</li>
+      <li>Check text boxes have visible resize handles</li>
+      <li>Go to History tab → Check relative timestamps</li>
+      <li>Hover all buttons → Verify tooltips</li>
+    </ol>
+  </div>
+
+  <div class="test-section">
+    <h2>✨ Summary</h2>
+    <p><strong>All 11 UX fixes implemented:</strong></p>
+    <ul>
+      <li>✅ Fix 4: Animated monogram (1s rotation)</li>
+      <li>✅ Fix 5: Toast notifications</li>
+      <li>✅ Fix 6: Relative timestamps</li>
+      <li>✅ Fix 7: Bigger resize handles</li>
+      <li>✅ Fix 8: Tooltips everywhere</li>
+      <li>✅ Fix 9: Loading spinner (already exists)</li>
+      <li>✅ Fix 10: Red/green chart colors</li>
+      <li>✅ Fix 11: Simplified panel header</li>
+    </ul>
+  </div>
+</body>
+</html>

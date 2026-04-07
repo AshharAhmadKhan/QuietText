@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>QuietText Panel</title>
+  <link rel="stylesheet" href="panel.css" />
+  <script src="chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ── Panel Header ── -->
+  <div class="qt-panel-header">
+    <div class="qt-panel-title">
+      <div class="qt-drag-grip"><span></span><span></span></div>
+      <div class="qt-panel-monogram">
+        <svg viewBox="0 0 24 24" class="qt-logo-svg">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2" class="qt-circle-1"/>
+          <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2" class="qt-circle-2"/>
+          <circle cx="12" cy="12" r="2" fill="currentColor" class="qt-circle-3"/>
+        </svg>
+      </div>
+    </div>
+    <button class="qt-close-btn" id="closeBtn" title="Close panel">✕</button>
+  </div>
+
+  <!-- ── Original Text Box ── -->
+  <div class="qt-section">
+    <p class="qt-label">Selected Text</p>
+    <div class="qt-original-box" id="originalText">
+      <span class="qt-placeholder">Waiting for selected text...</span>
+    </div>
+  </div>
+
+  <!-- ── Action Buttons ── -->
+  <div class="qt-section qt-actions">
+    <button class="qt-action-btn qt-simplify-btn" id="simplifyBtn" title="Simplify selected text">
+      ✦ Simplify
+    </button>
+    <div class="qt-explain-group">
+      <button class="qt-action-btn qt-explain-btn" id="explainBtn" title="Explain selected text">
+        ◈ Explain
+      </button>
+      <select class="qt-style-select" id="explainStyle" title="Choose explanation style">
+        <option value="plain">Plain</option>
+        <option value="bullets">Bullets</option>
+        <option value="steps">Step by Step</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ── Result Area ── -->
+  <div class="qt-section" id="resultSection" style="display:none;">
+    <div class="qt-result-header">
+      <p class="qt-label" id="resultLabel">Simplified Text</p>
+      <div class="qt-result-actions">
+        <button class="qt-icon-btn" id="copyBtn" title="Copy result">Copy</button>
+        <button class="qt-icon-btn" id="expandBtn" title="Expand result">⤢</button>
+      </div>
+    </div>
+    <div class="qt-result-box" id="resultText"></div>
+  </div>
+
+  <!-- ── Loading State — skeleton shimmer ── -->
+  <div class="qt-loading" id="loadingState" style="display:none;">
+    <div class="qt-skeleton"></div>
+    <div class="qt-skeleton"></div>
+    <div class="qt-skeleton"></div>
+  </div>
+
+  <!-- ── Error State ── -->
+  <div class="qt-error" id="errorState" style="display:none;"></div>
+
+  <!-- ── Metrics Chart ── -->
+  <div class="qt-section" id="metricsSection" style="display:none;">
+    <p class="qt-label">Readability Improvement</p>
+    <div class="qt-chart-container">
+      <canvas id="metricsChart"></canvas>
+    </div>
+    <div class="qt-metrics-grid" id="metricsGrid"></div>
+  </div>
+
+  <script src="metrics.js"></script>
+  <script src="storage.js"></script>
+  <script src="panel.js"></script>
+</body>
+</html>

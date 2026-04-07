@@ -1,0 +1,120 @@
+/* content.css */
+/* Dyslexia-friendly CSS presets. Toggled by adding a class to document.body. */
+/* Font loaded at runtime via content.js — no @font-face here */
+
+/* Toast notification */
+.qt-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1C1C1E;
+  color: #F2F0EB;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 2147483646;
+  pointer-events: none;
+  animation: qt-toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes qt-toast-in {
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.qt-toast.qt-toast-out {
+  animation: qt-toast-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes qt-toast-out {
+  to {
+    transform: translateX(-50%) translateY(100px);
+    opacity: 0;
+  }
+}
+
+/* Fix 6: Smooth transitions between presets */
+body[data-qt-active="true"] {
+  transition: font-size 0.3s ease, line-height 0.3s ease, background-color 0.3s ease;
+}
+
+/* Fix 8: Loading state */
+body.qt-loading {
+  opacity: 0.98;
+}
+
+/* ── Shared properties for ALL presets ── */
+/* Fix 5: Remove !important, use higher specificity */
+/* Fix 9: Replace * with specific selectors */
+body.qt-mild,
+body.qt-comfort,
+body.qt-focus {
+  font-family: 'OpenDyslexic', sans-serif;
+}
+
+body.qt-mild p, body.qt-mild h1, body.qt-mild h2, body.qt-mild h3, body.qt-mild h4, body.qt-mild h5, body.qt-mild h6, body.qt-mild li, body.qt-mild td, body.qt-mild th, body.qt-mild span, body.qt-mild div:not([class*="code"]):not([class*="pre"]),
+body.qt-comfort p, body.qt-comfort h1, body.qt-comfort h2, body.qt-comfort h3, body.qt-comfort h4, body.qt-comfort h5, body.qt-comfort h6, body.qt-comfort li, body.qt-comfort td, body.qt-comfort th, body.qt-comfort span, body.qt-comfort div:not([class*="code"]):not([class*="pre"]),
+body.qt-focus p, body.qt-focus h1, body.qt-focus h2, body.qt-focus h3, body.qt-focus h4, body.qt-focus h5, body.qt-focus h6, body.qt-focus li, body.qt-focus td, body.qt-focus th, body.qt-focus span, body.qt-focus div:not([class*="code"]):not([class*="pre"]) {
+  font-family: 'OpenDyslexic', sans-serif;
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+
+/* Fix 14: Exclude code blocks from letter-spacing */
+body.qt-mild code, body.qt-mild pre, body.qt-mild kbd, body.qt-mild samp,
+body.qt-comfort code, body.qt-comfort pre, body.qt-comfort kbd, body.qt-comfort samp,
+body.qt-focus code, body.qt-focus pre, body.qt-focus kbd, body.qt-focus samp {
+  font-family: monospace;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+/* Fix 15: Exclude UI elements from word-spacing */
+body.qt-mild button, body.qt-mild a, body.qt-mild nav, body.qt-mild input, body.qt-mild select,
+body.qt-comfort button, body.qt-comfort a, body.qt-comfort nav, body.qt-comfort input, body.qt-comfort select,
+body.qt-focus button, body.qt-focus a, body.qt-focus nav, body.qt-focus input, body.qt-focus select {
+  word-spacing: normal;
+}
+
+/* ── MILD preset ── */
+body.qt-mild {
+  font-size: 17px;
+  line-height: 1.6;
+  background-color: #F9F9F7;
+}
+
+/* ── COMFORT preset ── */
+body.qt-comfort {
+  font-size: 19px;
+  line-height: 1.9;
+  background-color: #F2F0EB;
+}
+
+/* ── FOCUS preset ── */
+body.qt-focus {
+  font-size: 21px;
+  line-height: 2.1;
+  background-color: #EBEBEB;
+}
+
+/* Fix 11: Hover effect on all text containers */
+/* Fix 12: Exclude media elements from background changes */
+body.qt-mild p:hover, body.qt-mild div:hover:not(:has(img)):not(:has(video)):not(:has(canvas)), body.qt-mild section:hover, body.qt-mild article:hover,
+body.qt-comfort p:hover, body.qt-comfort div:hover:not(:has(img)):not(:has(video)):not(:has(canvas)), body.qt-comfort section:hover, body.qt-comfort article:hover,
+body.qt-focus p:hover, body.qt-focus div:hover:not(:has(img)):not(:has(video)):not(:has(canvas)), body.qt-focus section:hover, body.qt-focus article:hover {
+  background-color: rgba(110, 110, 115, 0.07);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+/* Fix 12: Preserve media element backgrounds */
+body.qt-mild img, body.qt-mild video, body.qt-mild canvas,
+body.qt-comfort img, body.qt-comfort video, body.qt-comfort canvas,
+body.qt-focus img, body.qt-focus video, body.qt-focus canvas {
+  background-color: transparent;
+}

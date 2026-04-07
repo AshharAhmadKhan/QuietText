@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuietText</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="qt-header">
+    <div class="qt-logo">
+      <div class="qt-monogram">
+        <svg viewBox="0 0 24 24" class="qt-logo-svg">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2" class="qt-circle-1"/>
+          <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2" class="qt-circle-2"/>
+          <circle cx="12" cy="12" r="2" fill="currentColor" class="qt-circle-3"/>
+        </svg>
+      </div>
+      <span class="qt-logo-text">QuietText</span>
+    </div>
+    <div class="qt-header-controls">
+      <label class="qt-toggle" title="Enable/disable reading mode">
+        <input type="checkbox" id="masterToggle" />
+        <span class="qt-toggle-slider"></span>
+      </label>
+      <button class="qt-minimize-btn" id="minimizeBtn" title="Minimize popup">⊖</button>
+    </div>
+  </header>
+
+  <!-- ── Tab Bar ── -->
+  <div class="qt-tabs">
+    <button class="qt-tab active" id="tabPresets">Presets</button>
+    <button class="qt-tab" id="tabHistory">History</button>
+    <button class="qt-tab" id="tabSettings">Settings</button>
+  </div>
+
+  <!-- ── Presets Tab ── -->
+  <div class="qt-tab-content" id="panelPresets">
+    <p class="qt-section-label">Choose a reading style</p>
+    <div class="qt-preset-group">
+      <button class="qt-preset-btn" id="btn-mild" title="Apply mild reading mode">
+        <span class="qt-preset-name">Mild</span>
+        <span class="qt-preset-desc">17px · subtle spacing</span>
+      </button>
+      <button class="qt-preset-btn" id="btn-comfort" title="Apply comfort reading mode">
+        <span class="qt-preset-name">Comfort</span>
+        <span class="qt-preset-desc">19px · relaxed reading</span>
+      </button>
+      <button class="qt-preset-btn" id="btn-focus" title="Apply focus reading mode">
+        <span class="qt-preset-name">Focus</span>
+        <span class="qt-preset-desc">21px · maximum clarity</span>
+      </button>
+    </div>
+    <p class="qt-hint">Select text on any page, then right-click → <strong>Analyse with QuietText</strong></p>
+  </div>
+
+  <!-- ── History Tab ── -->
+  <div class="qt-tab-content hidden" id="panelHistory">
+    <p class="qt-section-label">Recent simplifications</p>
+    <div id="historyList" class="qt-history-list">
+      <p class="qt-empty">No history yet. Simplify some text to get started.</p>
+    </div>
+    <button class="qt-clear-btn" title="Clear all history">Clear History</button>
+  </div>
+
+  <!-- ── Settings Tab ── -->
+  <div class="qt-tab-content hidden" id="panelSettings">
+    <p class="qt-section-label">Groq API Key</p>
+    <p class="qt-hint">Get a free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
+    <div class="qt-key-row">
+      <input type="password" id="apiKeyInput" placeholder="API Key" class="qt-key-input" title="Enter your Groq API key" />
+      <button class="qt-save-btn" title="Save API key">Save</button>
+    </div>
+    <p id="keyStatus" class="qt-key-status"></p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

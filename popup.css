@@ -1,0 +1,521 @@
+/* popup.css — QuietText Ink Wash palette */
+/* Charcoal #1C1C1E | Mid #2C2C2E | Cool Gray #6E6E73 | Off-white #E8E6E1 | Ivory #F2F0EB | White #FFFFFF */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 340px;
+  min-height: 60px;
+  height: var(--popup-h, auto);
+  max-height: 560px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1C1C1E;
+  background: #F2F0EB;
+  overflow-x: hidden;
+  overflow-y: auto;
+  animation: qt-popup-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+  position: relative;
+}
+
+@keyframes qt-popup-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* ── Minimized state ── */
+body.qt-minimized {
+  max-height: 48px;
+  overflow: hidden;
+}
+
+body.qt-minimized .qt-tabs,
+body.qt-minimized .qt-tab-content {
+  display: none;
+}
+
+/* ── Header ── */
+.qt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1C1C1E;
+  padding: 10px 14px;
+  gap: 8px;
+}
+
+.qt-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+}
+
+/* QT monogram badge - fades away after animation */
+.qt-monogram {
+  width: 26px;
+  height: 26px;
+  background: #F2F0EB;
+  color: #1C1C1E;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  animation: qt-monogram-fade 2.5s ease-in-out forwards;
+}
+
+@keyframes qt-monogram-fade {
+  0%, 80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Animated SVG logo - ripple effect that fades away */
+.qt-logo-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.qt-circle-1 {
+  animation: qt-ripple-1 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.qt-circle-2 {
+  animation: qt-ripple-2 2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+}
+
+.qt-circle-3 {
+  animation: qt-ripple-3 2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+@keyframes qt-ripple-1 {
+  0% {
+    r: 2;
+    opacity: 1;
+  }
+  70% {
+    r: 10;
+    opacity: 0.6;
+  }
+  100% {
+    r: 12;
+    opacity: 0;
+  }
+}
+
+@keyframes qt-ripple-2 {
+  0% {
+    r: 2;
+    opacity: 1;
+  }
+  70% {
+    r: 8;
+    opacity: 0.7;
+  }
+  100% {
+    r: 10;
+    opacity: 0;
+  }
+}
+
+@keyframes qt-ripple-3 {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0.8;
+    transform: scale(2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3);
+  }
+}
+
+.qt-logo-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #F2F0EB;
+  letter-spacing: 0.03em;
+}
+
+/* ── Header controls ── */
+.qt-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Toggle Switch ── */
+.qt-toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.qt-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.qt-toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #3A3A3C;
+  border-radius: 20px;
+  border: 1px solid #6E6E73;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.qt-toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 2px;
+  top: 2px;
+  background: #6E6E73;
+  border-radius: 50%;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.qt-toggle input:checked + .qt-toggle-slider {
+  background: #F2F0EB;
+  border-color: #F2F0EB;
+}
+
+.qt-toggle input:checked + .qt-toggle-slider::before {
+  transform: translateX(16px);
+  background: #1C1C1E;
+}
+
+/* ── Minimize button ── */
+.qt-minimize-btn {
+  background: none;
+  border: 1px solid #3A3A3C;
+  color: #6E6E73;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.qt-minimize-btn:hover {
+  background: #2C2C2E;
+  border-color: #6E6E73;
+  color: #F2F0EB;
+}
+
+/* ── Tab Bar ── */
+.qt-tabs {
+  display: flex;
+  border-bottom: 1px solid #E8E6E1;
+  background: #FFFFFF;
+}
+
+.qt-tab {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6E6E73;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  letter-spacing: 0.02em;
+}
+
+.qt-tab:hover {
+  color: #1C1C1E;
+  background: #F2F0EB;
+}
+
+.qt-tab.active {
+  color: #1C1C1E;
+  font-weight: 700;
+  border-bottom: 3px solid #1C1C1E;
+}
+
+/* ── Tab Content ── */
+.qt-tab-content {
+  padding: 14px 16px;
+  background: #F2F0EB;
+  animation: qt-tab-in 0.15s ease both;
+}
+
+@keyframes qt-tab-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.qt-tab-content.hidden {
+  display: none;
+}
+
+/* ── Section Label ── */
+.qt-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6E6E73;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+/* ── Preset Buttons ── */
+.qt-preset-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.qt-preset-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid #E8E6E1;
+  border-radius: 8px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.qt-preset-btn:hover {
+  border-color: #1C1C1E;
+  background: #F2F0EB;
+  transform: translateX(2px);
+}
+
+.qt-preset-btn.active {
+  border-color: #1C1C1E;
+  background: #1C1C1E;
+  box-shadow: 0 2px 8px rgba(28, 28, 30, 0.2);
+  transform: translateX(2px);
+}
+
+.qt-preset-btn.active .qt-preset-name {
+  color: #F2F0EB;
+}
+
+.qt-preset-btn.active .qt-preset-desc {
+  color: #6E6E73;
+}
+
+.qt-preset-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1C1C1E;
+}
+
+.qt-preset-desc {
+  font-size: 11px;
+  color: #6E6E73;
+}
+
+/* ── Hint ── */
+.qt-hint {
+  font-size: 11px;
+  color: #6E6E73;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.qt-hint a {
+  color: #1C1C1E;
+  text-decoration: underline;
+}
+
+/* ── History ── */
+.qt-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  max-height: 260px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Fix 33: Visual indicator for scrollable content */
+.qt-history-list::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, transparent, #F2F0EB);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.qt-history-list:not(:hover)::after {
+  opacity: 0;
+}
+
+.qt-history-list:hover::after {
+  opacity: 1;
+}
+
+/* Custom scrollbar */
+.qt-history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.qt-history-list::-webkit-scrollbar-track {
+  background: #E8E6E1;
+  border-radius: 3px;
+}
+
+.qt-history-list::-webkit-scrollbar-thumb {
+  background: #6E6E73;
+  border-radius: 3px;
+}
+
+.qt-history-list::-webkit-scrollbar-thumb:hover {
+  background: #1C1C1E;
+}
+
+.qt-history-item {
+  padding: 8px 12px;
+  border: 1px solid #E8E6E1;
+  border-radius: 8px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qt-history-item:hover {
+  border-color: #1C1C1E;
+  background: #F2F0EB;
+}
+
+.qt-history-preview {
+  font-size: 12px;
+  color: #1C1C1E;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qt-history-time {
+  font-size: 10px;
+  color: #6E6E73;
+  margin-top: 2px;
+}
+
+.qt-empty {
+  font-size: 12px;
+  color: #6E6E73;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.qt-clear-btn {
+  width: 100%;
+  padding: 7px;
+  font-size: 12px;
+  color: #6E6E73;
+  background: none;
+  border: 1px solid #E8E6E1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qt-clear-btn:hover:not(:disabled) {
+  border-color: #1C1C1E;
+  color: #1C1C1E;
+}
+
+.qt-clear-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Settings ── */
+.qt-key-row {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.qt-key-input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 12px;
+  border: 1px solid #E8E6E1;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: #1C1C1E;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.qt-key-input::placeholder {
+  color: #6E6E73;
+}
+
+.qt-key-input:focus {
+  border-color: #1C1C1E;
+}
+
+.qt-save-btn {
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #F2F0EB;
+  background: #1C1C1E;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qt-save-btn:hover:not(:disabled) {
+  background: #2C2C2E;
+}
+
+.qt-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.qt-key-status {
+  font-size: 11px;
+  color: #6E6E73;
+  min-height: 16px;
+}
