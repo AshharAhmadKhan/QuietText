@@ -1,11 +1,11 @@
 // popup.js
-// Controls the popup UI. Handles preset selection, toggle, history, API key, resize.
+// Main popup UI logic
 
-// ── Tab switching ──
+// Tab switching
 let tabScrollPositions = { presets: 0, history: 0, settings: 0 };
 
 function showTab(tab) {
-  // Fix 21: Save scroll position of current tab
+  // Save scroll position of current tab
   const currentTab = document.querySelector('.qt-tab-content:not(.hidden)');
   if (currentTab) {
     const currentTabName = currentTab.id.replace('panel', '').toLowerCase();
@@ -22,19 +22,17 @@ function showTab(tab) {
   tabContent.classList.remove('hidden');
   document.getElementById(btnMap[tab]).classList.add('active');
 
-  // Fix 21: Restore scroll position
+  // Restore scroll position
   setTimeout(() => {
     tabContent.scrollTop = tabScrollPositions[tab] || 0;
   }, 0);
 
   if (tab === 'history') loadHistory();
-  // Fix 11: Update preset UI when switching to presets tab
   if (tab === 'presets') updatePresetUI(activePreset);
-  // Fix 31: Show API key status when switching to settings
   if (tab === 'settings') updateApiKeyStatus();
 }
 
-// ── Send message to active tab's content script ──
+// Send message to content script
 function sendToActiveTab(message, callback) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs[0]) {
@@ -42,18 +40,18 @@ function sendToActiveTab(message, callback) {
       return;
     }
     
-    // Check if tab URL is a restricted page where content scripts can't run
+    // Check for restricted pages
     const url = tabs[0].url || '';
     const restrictedPages = ['chrome://', 'chrome-extension://', 'about:', 'edge://', 'devtools://'];
     const isRestricted = restrictedPages.some(prefix => url.startsWith(prefix));
     
     if (isRestricted) {
-      // Silently fail on restricted pages - this is expected behavior
+      // Expected on chrome:// pages
       if (callback) callback({ error: 'restricted_page' });
       return;
     }
     
-    // 2-second timeout
+    // Timeout after 2s
     let responded = false;
     const timeoutId = setTimeout(() => {
       if (!responded && callback) {
@@ -68,7 +66,7 @@ function sendToActiveTab(message, callback) {
       clearTimeout(timeoutId);
 
       if (chrome.runtime.lastError) {
-        // Only log warning for unexpected errors, not restricted pages
+        // Skip warning for restricted pages
         if (!isRestricted) {
           console.warn('QuietText: content script not available on this page.');
         }
@@ -80,21 +78,21 @@ function sendToActiveTab(message, callback) {
   });
 }
 
-// ── Preset selection ──
+// Preset selection
 let activePreset = null;
 let presetDebounceTimer = null;
 
 function selectPreset(preset) {
   const toggle = document.getElementById('masterToggle');
   
-  // Don't toggle off if clicking the same preset — keep it active
+  // Don't toggle off if clicking the same preset
   if (activePreset === preset) return;
 
   activePreset = preset;
   toggle.checked = true;
   updatePresetUI(preset);
   
-  // Debounce: only send after 100ms of no clicks
+  // Debounce preset changes
   clearTimeout(presetDebounceTimer);
   presetDebounceTimer = setTimeout(() => {
     sendToActiveTab({ type: 'SET_PRESET', preset });
@@ -113,24 +111,20 @@ function updatePresetUI(preset) {
   });
 }
 
-// ── Load history ──
 let loadHistoryDebounceTimer = null;
 
 function loadHistory() {
-  // Fix 12: Debounce to prevent rapid concurrent reads
+  // Debounce history loads
   clearTimeout(loadHistoryDebounceTimer);
   loadHistoryDebounceTimer = setTimeout(() => {
     const list = document.getElementById('historyList');
     chrome.storage.local.get(['quiettext_history'], (data) => {
       const history = data.quiettext_history || [];
       if (history.length === 0) {
-        // Fix 20: Improved empty history message
         list.innerHTML = '<p class="qt-empty">Select text on any page, right-click → <strong>Analyse with QuietText</strong></p>';
         return;
       }
-      // Fix 15: Add character count to history items
       list.innerHTML = history.map(entry => {
-        // Relative timestamp
         const displayTime = entry.timestamp ? formatRelativeTime(entry.timestamp) : 'Unknown';
         return `
           <div class="qt-history-item" data-id="${entry.id}">
@@ -146,7 +140,7 @@ function loadHistory() {
   }, 100);
 }
 
-// ── Format relative time ──
+// Format relative time
 function formatRelativeTime(timestamp) {
   const now = Date.now();
   const then = new Date(timestamp).getTime();
@@ -163,7 +157,6 @@ function formatRelativeTime(timestamp) {
 }
 
 function openHistoryEntry(id) {
-  // Fix 24: Add loading state
   const list = document.getElementById('historyList');
   const items = list.querySelectorAll('.qt-history-item');
   items.forEach(item => item.style.pointerEvents = 'none');
@@ -171,8 +164,6 @@ function openHistoryEntry(id) {
   chrome.storage.local.get(['quiettext_history'], (data) => {
     const history = data.quiettext_history || [];
     const entry = history.find(e => e.id === id);
-    
-    // Fix 10: Validate entry structure
     if (!entry) {
       items.forEach(item => item.style.pointerEvents = '');
       return;
@@ -188,12 +179,10 @@ function openHistoryEntry(id) {
       return;
     }
     
-    // Wait for confirmation before closing popup
     sendToActiveTab({ type: 'OPEN_PANEL', text: entry.original, restored: entry }, (response) => {
       if (response && !response.error) {
         window.close();
       } else {
-        // Show error, keep popup open
         items.forEach(item => item.style.pointerEvents = '');
         const errorMsg = document.createElement('p');
         errorMsg.className = 'qt-error';
@@ -207,12 +196,10 @@ function openHistoryEntry(id) {
 }
 
 function clearHistory() {
-  // Fix 15: Add confirmation dialog
   if (!confirm('Clear all history? This cannot be undone.')) {
     return;
   }
   
-  // Fix 16: Add loading state
   const btn = document.querySelector('.qt-clear-btn');
   const originalText = btn.textContent;
   btn.disabled = true;
@@ -225,7 +212,7 @@ function clearHistory() {
   });
 }
 
-// Helper to show errors in popup
+
 function showError(msg) {
   const list = document.getElementById('historyList');
   const errorMsg = document.createElement('p');
@@ -236,9 +223,8 @@ function showError(msg) {
   setTimeout(() => errorMsg.remove(), 3000);
 }
 
-// ── API Key ──
+
 function updateApiKeyStatus() {
-  // Fix 31: Update status when settings tab is opened
   chrome.storage.local.get(['gemini_api_key'], (data) => {
     const status = document.getElementById('keyStatus');
     if (data.gemini_api_key) {
@@ -257,7 +243,6 @@ function saveApiKey() {
   const btn    = document.querySelector('.qt-save-btn');
   const key    = input.value.trim();
   
-  // Validate format
   if (!key) {
     status.textContent = 'Please enter a valid key.';
     status.style.color = '#6E6E73';
@@ -269,7 +254,6 @@ function saveApiKey() {
     return;
   }
 
-  // Fix 24: Add loading state
   btn.disabled = true;
   btn.textContent = 'Saving...';
 
@@ -302,15 +286,14 @@ function wireRemoveKey() {
   if (link) link.addEventListener('click', (e) => { e.preventDefault(); removeApiKey(); });
 }
 
-// ── Utility ──
+
 function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Wire up all events inside DOMContentLoaded ──
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tabPresets').addEventListener('click',  () => {
-    // Fix 23: Prevent tab switching when minimized
     if (document.body.classList.contains('qt-minimized')) return;
     showTab('presets');
   });
@@ -330,18 +313,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('.qt-clear-btn').addEventListener('click', clearHistory);
   document.querySelector('.qt-save-btn').addEventListener('click',  saveApiKey);
 
-  // ── Minimize ──
+
   const minimizeBtn = document.getElementById('minimizeBtn');
   minimizeBtn.addEventListener('click', () => {
     const minimized = document.body.classList.toggle('qt-minimized');
-    // Fix 14: Clearer button text
     minimizeBtn.textContent = minimized ? '⊕' : '⊖';
     minimizeBtn.title = minimized ? 'Restore' : 'Minimize';
-    // Persist minimize state
     chrome.storage.local.set({ qt_popup_minimized: minimized });
   });
 
-  // ── Master toggle ──
+
   let toggleLocked = false;
   document.getElementById('masterToggle').addEventListener('change', (e) => {
     if (toggleLocked) return;
@@ -349,7 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { toggleLocked = false; }, 200);
 
     if (e.target.checked) {
-      // Query current tab state first
       sendToActiveTab({ type: 'GET_STATE' }, (response) => {
         let preset = activePreset;
         if (response && response.preset) {
@@ -370,26 +350,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Init: restore state ──
-  chrome.storage.local.get(['qt_active_preset', 'gemini_api_key', 'qt_popup_minimized'], (data) => {
 
-    // Restore minimize state
+  const introAnimation = document.getElementById('introAnimation');
+  const headerContent = document.getElementById('headerContent');
+  
+  function skipIntro() {
+    if (introAnimation) {
+      introAnimation.style.display = 'none';
+      headerContent.style.animation = 'none';
+      headerContent.style.opacity = '1';
+      document.querySelector('.qt-logo').style.animation = 'none';
+      document.querySelector('.qt-logo').style.opacity = '1';
+      document.querySelector('.qt-logo').style.transform = 'none';
+      document.querySelector('.qt-header-controls').style.animation = 'none';
+      document.querySelector('.qt-header-controls').style.opacity = '1';
+      document.querySelector('.qt-header-controls').style.transform = 'none';
+      document.querySelectorAll('.qt-tagline-word').forEach(word => {
+        word.style.animation = 'none';
+        word.style.opacity = '1';
+        word.style.transform = 'none';
+      });
+    }
+  }
+  
+  // Click to skip
+  document.body.addEventListener('click', skipIntro, { once: true });
+
+  setTimeout(() => {
+    if (introAnimation) introAnimation.remove();
+  }, 3500);
+
+
+  chrome.storage.local.get(['qt_active_preset', 'gemini_api_key', 'qt_popup_minimized', 'qt_first_use'], (data) => {
     if (data.qt_popup_minimized) {
       document.body.classList.add('qt-minimized');
-      // Fix 14: Use new button symbols
       document.getElementById('minimizeBtn').textContent = '⊕';
       document.getElementById('minimizeBtn').title = 'Restore';
     }
-
-    // Query current tab's preset state
+    const isFirstUse = !data.qt_first_use;
+    if (isFirstUse) {
+      chrome.storage.local.set({ qt_first_use: true });
+    }
     sendToActiveTab({ type: 'GET_STATE' }, (response) => {
       let preset = null;
       if (response && response.preset) {
         preset = response.preset;
       } else if (data.qt_active_preset) {
         preset = data.qt_active_preset;
-        // Sync to current tab
         sendToActiveTab({ type: 'SET_PRESET', preset });
+      } else if (isFirstUse) {
+        preset = 'qt-comfort';
+        sendToActiveTab({ type: 'SET_PRESET', preset });
+        chrome.storage.local.set({ qt_active_preset: preset });
       }
 
       if (preset) {
@@ -398,8 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePresetUI(activePreset);
       }
     });
-
-    // API key status
     if (data.gemini_api_key) {
       const status = document.getElementById('keyStatus');
       status.innerHTML   = '✓ API key is set. <a href="#" id="removeKeyLink" style="color:#6E6E73;margin-left:6px;">Remove</a>';
@@ -408,9 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Fix 34: Handle popup close during operations
   window.addEventListener('beforeunload', () => {
-    // Clear any pending timers
     if (presetDebounceTimer) clearTimeout(presetDebounceTimer);
   });
 });

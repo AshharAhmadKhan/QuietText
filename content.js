@@ -1,34 +1,23 @@
 // content.js
-// Injected into every webpage by Chrome.
 
 const QT_PRESETS  = ['qt-mild', 'qt-comfort', 'qt-focus'];
 let currentPreset = null;
 let panelInjected = false;
-
-// ── Apply a preset to the page ──
 function applyPreset(preset) {
-  // Fix 4: Check body exists
   if (!document.body) return;
-  
-  // Fix 10: Mark extension as active when preset is applied
   document.body.setAttribute('data-qt-active', 'true');
   
   QT_PRESETS.forEach(p => document.body.classList.remove(p));
   if (preset && QT_PRESETS.includes(preset)) {
     document.body.classList.add(preset);
     currentPreset = preset;
-    
-    // Show toast notification
     showToast(getPresetName(preset) + ' mode applied');
   } else {
     currentPreset = null;
     showToast('Reading mode disabled');
   }
 }
-
-// ── Show toast notification ──
 function showToast(message) {
-  // Remove existing toast
   const existing = document.querySelector('.qt-toast');
   if (existing) existing.remove();
   
@@ -36,15 +25,11 @@ function showToast(message) {
   toast.className = 'qt-toast';
   toast.textContent = message;
   document.body.appendChild(toast);
-  
-  // Auto-dismiss after 2 seconds
   setTimeout(() => {
     toast.classList.add('qt-toast-out');
     setTimeout(() => toast.remove(), 250);
   }, 2000);
 }
-
-// ── Get preset display name ──
 function getPresetName(preset) {
   const names = {
     'qt-mild': 'Mild',
@@ -53,8 +38,6 @@ function getPresetName(preset) {
   };
   return names[preset] || preset;
 }
-
-// ── Throttle helper ──
 function throttle(fn, ms) {
   let last = 0;
   return function(...args) {
@@ -63,7 +46,7 @@ function throttle(fn, ms) {
   };
 }
 
-// ── Inject the floating AI panel ──
+// Inject the floating AI panel
 function injectPanel(selectedText, restored) {
   // Guard: check DOM existence, not just flag
   const existingIframe = document.getElementById('qt-panel-iframe');
@@ -138,11 +121,11 @@ function injectPanel(selectedText, restored) {
     removePanel();
   });
 
-  // ── AbortController to clean up all listeners on panel close ──
+  // AbortController to clean up all listeners on panel close
   const ac = new AbortController();
   const sig = ac.signal;
 
-  // ── Drag-to-move: overlay approach for smooth dragging ──
+  // Drag-to-move: overlay approach for smooth dragging
   let dragOverlay = null;
   let dragStartX = 0, dragStartY = 0;
   let currentTranslateX = 0, currentTranslateY = 0;
@@ -235,7 +218,7 @@ function injectPanel(selectedText, restored) {
     }
   }, { signal: sig });
 
-  // ── Resize: bottom-LEFT corner with pulsing glow ──
+  // Resize: bottom-LEFT corner with pulsing glow
   const resizeHandle = document.createElement('div');
   resizeHandle.style.cssText = `
     position: absolute;
@@ -346,7 +329,7 @@ function injectPanel(selectedText, restored) {
   container._ac = ac;
 }
 
-// ── Remove the panel ──
+// Remove the panel
 function removePanel() {
   const container = document.getElementById('qt-panel-container');
   if (container) {
@@ -356,7 +339,7 @@ function removePanel() {
   panelInjected = false;
 }
 
-// ── Message listener ──
+// Message listener
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Validate message structure
   if (!message || typeof message !== 'object' || !message.type) {
@@ -383,7 +366,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.warn('QuietText: Unknown message type:', message.type);
 });
 
-// ── Panel iframe message listener (for close only, drag handled in injectPanel) ──
+// Panel iframe message listener
 window.addEventListener('message', (event) => {
   // Validate message structure
   if (!event.data || typeof event.data !== 'object') return;
@@ -392,16 +375,14 @@ window.addEventListener('message', (event) => {
   if (event.data.type === 'CLOSE_PANEL') removePanel();
 });
 
-// ── Inject OpenDyslexic font at runtime ──
+// Inject OpenDyslexic font at runtime
 function injectFonts() {
-  // Fix 7: Wait for DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', injectFonts);
     return;
   }
 
   try {
-    // Fix 2: Validate font URLs
     const regularUrl = chrome.runtime.getURL('fonts/OpenDyslexic-Regular.otf');
     const boldUrl = chrome.runtime.getURL('fonts/OpenDyslexic-Bold.otf');
     
@@ -429,19 +410,15 @@ function injectFonts() {
       }
     `;
     document.head.appendChild(qtFontStyle);
-
-    // Fix 3: Mark fonts as injected (browser will load them automatically)
     document.body.setAttribute('data-qt-fonts-ready', 'true');
-    console.log('QuietText: Font styles injected successfully');
+    console.log('Font styles injected successfully');
   } catch (err) {
-    // Fix 1: Error handling
     console.error('QuietText: Font injection failed:', err);
   }
 }
 
-// ── Restore preset on page load ──
+// Restore preset on page load
 function restorePreset() {
-  // Fix 4 & 8: Wait for body to exist, show loading state
   if (!document.body) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', restorePreset);
@@ -449,12 +426,10 @@ function restorePreset() {
     return;
   }
 
-  // Fix 10: Mark extension as active
   document.body.setAttribute('data-qt-active', 'true');
 
   chrome.storage.local.get(['qt_active_preset'], (data) => {
     if (data.qt_active_preset) {
-      // Fix 8: Add loading class
       document.body.classList.add('qt-loading');
       setTimeout(() => {
         applyPreset(data.qt_active_preset);

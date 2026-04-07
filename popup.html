@@ -8,47 +8,61 @@
 </head>
 <body>
 
-  <!-- ── Header ── -->
+  <!-- Header -->
   <header class="qt-header">
-    <div class="qt-logo">
-      <div class="qt-monogram">
-        <svg viewBox="0 0 24 24" class="qt-logo-svg">
-          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2" class="qt-circle-1"/>
-          <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2" class="qt-circle-2"/>
-          <circle cx="12" cy="12" r="2" fill="currentColor" class="qt-circle-3"/>
-        </svg>
+    <!-- Intro animation container -->
+    <div class="qt-intro-animation" id="introAnimation">
+      <div class="qt-typing-container">
+        <div class="qt-typing-line"></div>
+        <div class="qt-typing-cursor"></div>
       </div>
-      <span class="qt-logo-text">QuietText</span>
     </div>
-    <div class="qt-header-controls">
-      <label class="qt-toggle" title="Enable/disable reading mode">
-        <input type="checkbox" id="masterToggle" />
-        <span class="qt-toggle-slider"></span>
-      </label>
-      <button class="qt-minimize-btn" id="minimizeBtn" title="Minimize popup">⊖</button>
+    
+    <!-- Main content (hidden initially) -->
+    <div class="qt-header-content" id="headerContent">
+      <div class="qt-header-top-row">
+        <div class="qt-logo">
+          <span class="qt-logo-text">QuietText</span>
+        </div>
+        <div class="qt-header-controls">
+          <label class="qt-toggle" title="Enable/disable reading mode">
+            <input type="checkbox" id="masterToggle" aria-label="Toggle reading mode" />
+            <span class="qt-toggle-slider"></span>
+          </label>
+          <button class="qt-minimize-btn" id="minimizeBtn" title="Minimize popup" aria-label="Minimize popup">⊖</button>
+        </div>
+      </div>
+      <p class="qt-tagline">
+        <span class="qt-tagline-word">Make</span>
+        <span class="qt-tagline-word">any</span>
+        <span class="qt-tagline-word">text</span>
+        <span class="qt-tagline-word">easier</span>
+        <span class="qt-tagline-word">to</span>
+        <span class="qt-tagline-word">read</span>
+      </p>
     </div>
   </header>
 
-  <!-- ── Tab Bar ── -->
-  <div class="qt-tabs">
-    <button class="qt-tab active" id="tabPresets">Presets</button>
-    <button class="qt-tab" id="tabHistory">History</button>
-    <button class="qt-tab" id="tabSettings">Settings</button>
+  <!-- Tab Bar -->
+  <div class="qt-tabs" role="tablist">
+    <button class="qt-tab active" id="tabPresets" role="tab" aria-selected="true" aria-controls="panelPresets">Presets</button>
+    <button class="qt-tab" id="tabHistory" role="tab" aria-selected="false" aria-controls="panelHistory">History</button>
+    <button class="qt-tab" id="tabSettings" role="tab" aria-selected="false" aria-controls="panelSettings">Settings</button>
   </div>
 
-  <!-- ── Presets Tab ── -->
-  <div class="qt-tab-content" id="panelPresets">
+  <!-- Presets Tab -->
+  <div class="qt-tab-content" id="panelPresets" role="tabpanel" aria-labelledby="tabPresets">
     <p class="qt-section-label">Choose a reading style</p>
     <div class="qt-preset-group">
-      <button class="qt-preset-btn" id="btn-mild" title="Apply mild reading mode">
+      <button class="qt-preset-btn" id="btn-mild" title="Apply mild reading mode" aria-label="Mild preset: 17px font with subtle spacing">
         <span class="qt-preset-name">Mild</span>
         <span class="qt-preset-desc">17px · subtle spacing</span>
       </button>
-      <button class="qt-preset-btn" id="btn-comfort" title="Apply comfort reading mode">
+      <button class="qt-preset-btn" id="btn-comfort" title="Apply comfort reading mode" aria-label="Comfort preset: 19px font with relaxed reading">
         <span class="qt-preset-name">Comfort</span>
         <span class="qt-preset-desc">19px · relaxed reading</span>
       </button>
-      <button class="qt-preset-btn" id="btn-focus" title="Apply focus reading mode">
+      <button class="qt-preset-btn" id="btn-focus" title="Apply focus reading mode" aria-label="Focus preset: 21px font with maximum clarity">
         <span class="qt-preset-name">Focus</span>
         <span class="qt-preset-desc">21px · maximum clarity</span>
       </button>
@@ -56,24 +70,24 @@
     <p class="qt-hint">Select text on any page, then right-click → <strong>Analyse with QuietText</strong></p>
   </div>
 
-  <!-- ── History Tab ── -->
-  <div class="qt-tab-content hidden" id="panelHistory">
+  <!-- History Tab -->
+  <div class="qt-tab-content hidden" id="panelHistory" role="tabpanel" aria-labelledby="tabHistory">
     <p class="qt-section-label">Recent simplifications</p>
-    <div id="historyList" class="qt-history-list">
+    <div id="historyList" class="qt-history-list" role="list">
       <p class="qt-empty">No history yet. Simplify some text to get started.</p>
     </div>
-    <button class="qt-clear-btn" title="Clear all history">Clear History</button>
+    <button class="qt-clear-btn" title="Clear all history" aria-label="Clear all history">Clear History</button>
   </div>
 
-  <!-- ── Settings Tab ── -->
-  <div class="qt-tab-content hidden" id="panelSettings">
+  <!-- Settings Tab -->
+  <div class="qt-tab-content hidden" id="panelSettings" role="tabpanel" aria-labelledby="tabSettings">
     <p class="qt-section-label">Groq API Key</p>
     <p class="qt-hint">Get a free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
     <div class="qt-key-row">
-      <input type="password" id="apiKeyInput" placeholder="API Key" class="qt-key-input" title="Enter your Groq API key" />
-      <button class="qt-save-btn" title="Save API key">Save</button>
+      <input type="password" id="apiKeyInput" placeholder="API Key" class="qt-key-input" title="Enter your Groq API key" aria-label="Groq API key input" />
+      <button class="qt-save-btn" title="Save API key" aria-label="Save API key">Save</button>
     </div>
-    <p id="keyStatus" class="qt-key-status"></p>
+    <p id="keyStatus" class="qt-key-status" role="status" aria-live="polite"></p>
   </div>
 
   <script src="popup.js"></script>

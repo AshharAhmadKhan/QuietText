@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <!-- ── Panel Header ── -->
+  <!-- Panel Header -->
   <div class="qt-panel-header">
     <div class="qt-panel-title">
       <div class="qt-drag-grip"><span></span><span></span></div>
@@ -23,15 +23,15 @@
     <button class="qt-close-btn" id="closeBtn" title="Close panel">✕</button>
   </div>
 
-  <!-- ── Original Text Box ── -->
+  <!-- Original Text Box -->
   <div class="qt-section">
     <p class="qt-label">Selected Text</p>
     <div class="qt-original-box" id="originalText">
-      <span class="qt-placeholder">Waiting for selected text...</span>
+      <span class="qt-placeholder">💡 Tip: Select text on any page, then press Ctrl+Shift+Q or right-click → Analyse with QuietText</span>
     </div>
   </div>
 
-  <!-- ── Action Buttons ── -->
+  <!-- Action Buttons -->
   <div class="qt-section qt-actions">
     <button class="qt-action-btn qt-simplify-btn" id="simplifyBtn" title="Simplify selected text">
       ✦ Simplify
@@ -48,7 +48,7 @@
     </div>
   </div>
 
-  <!-- ── Result Area ── -->
+  <!-- Result Area -->
   <div class="qt-section" id="resultSection" style="display:none;">
     <div class="qt-result-header">
       <p class="qt-label" id="resultLabel">Simplified Text</p>
@@ -60,17 +60,21 @@
     <div class="qt-result-box" id="resultText"></div>
   </div>
 
-  <!-- ── Loading State — skeleton shimmer ── -->
+  <!-- Loading State -->
   <div class="qt-loading" id="loadingState" style="display:none;">
+    <div class="qt-loading-text">
+      <span class="qt-loading-spinner">✨</span>
+      <span>Simplifying...</span>
+    </div>
     <div class="qt-skeleton"></div>
     <div class="qt-skeleton"></div>
     <div class="qt-skeleton"></div>
   </div>
 
-  <!-- ── Error State ── -->
+  <!-- Error State -->
   <div class="qt-error" id="errorState" style="display:none;"></div>
 
-  <!-- ── Metrics Chart ── -->
+  <!-- Metrics Chart -->
   <div class="qt-section" id="metricsSection" style="display:none;">
     <p class="qt-label">Readability Improvement</p>
     <div class="qt-chart-container">

@@ -1,5 +1,21 @@
-/* panel.css — QuietText Ink Wash palette */
-/* Charcoal #1C1C1E | Mid #2C2C2E | Cool Gray #6E6E73 | Off-white #E8E6E1 | Ivory #F2F0EB | White #FFFFFF */
+/* panel.css */
+
+/* OpenDyslexic Font */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('fonts/OpenDyslexic-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('fonts/OpenDyslexic-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 * {
   box-sizing: border-box;
@@ -26,7 +42,7 @@ html, body {
   to   { opacity: 1; transform: translateX(0);    }
 }
 
-/* ── Panel Header — draggable cursor hint ── */
+/* Panel Header */
 .qt-panel-header {
   display: flex;
   align-items: center;
@@ -54,7 +70,7 @@ html, body {
   letter-spacing: 0.02em;
 }
 
-/* Drag grip dots */
+/* Drag grip */
 .qt-drag-grip {
   display: flex;
   flex-direction: column;
@@ -83,7 +99,7 @@ html, body {
   background: #F2F0EB;
 }
 
-/* QT monogram in panel header - fades away after animation */
+/* Panel monogram */
 .qt-panel-monogram {
   width: 24px;
   height: 24px;
@@ -109,7 +125,7 @@ html, body {
   }
 }
 
-/* Animated SVG logo - ripple effect that fades away */
+/* Animated logo */
 .qt-logo-svg {
   width: 100%;
   height: 100%;
@@ -190,13 +206,13 @@ html, body {
   color: #F2F0EB;
 }
 
-/* ── Result section animation ── */
+/* Result section */
 .qt-section {
   padding: 14px 16px;
   border-bottom: 1px solid #E8E6E1;
 }
 
-/* Fix 14: Add animation to result section */
+/* Result animation */
 #resultSection {
   animation: qt-section-in 0.25s ease both;
 }
@@ -215,7 +231,7 @@ html, body {
   margin-bottom: 8px;
 }
 
-/* ── Original Text Box ── */
+/* Original Text Box */
 .qt-original-box {
   background: #FFFFFF;
   border: 1px solid #E8E6E1;
@@ -233,6 +249,7 @@ html, body {
   cursor: text;
   resize: vertical;
   position: relative;
+  font-family: 'OpenDyslexic', sans-serif;
 }
 
 .qt-original-box:hover {
@@ -240,7 +257,7 @@ html, body {
   box-shadow: 0 0 0 1px rgba(110, 110, 115, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Bigger resize handle indicator */
+/* Resize handle */
 .qt-original-box::-webkit-resizer,
 .qt-result-box::-webkit-resizer {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="2" fill="%231C1C1E" opacity="0.4"/><circle cx="6" cy="12" r="2" fill="%231C1C1E" opacity="0.4"/><circle cx="12" cy="6" r="2" fill="%231C1C1E" opacity="0.4"/></svg>');
@@ -253,7 +270,7 @@ html, body {
   font-style: italic;
 }
 
-/* ── Action Buttons ── */
+/* Action Buttons */
 .qt-actions {
   display: flex;
   flex-direction: column;
@@ -276,12 +293,39 @@ html, body {
   color: #F2F0EB;
   width: 100%;
   letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ripple effect */
+.qt-simplify-btn::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: rgba(242, 240, 235, 0.2);
+  pointer-events: none;
+  transition: transform 0.5s ease;
+}
+
+.qt-simplify-btn:active::after {
+  transform: translate(-50%, -50%) scale(2.5);
+  transition: transform 0s;
 }
 
 .qt-simplify-btn:hover {
   background: #2C2C2E;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(28, 28, 30, 0.25);
+}
+
+.qt-simplify-btn:focus {
+  outline: 2px solid #a88f6b;
+  outline-offset: 2px;
 }
 
 .qt-simplify-btn:disabled {
@@ -304,11 +348,38 @@ html, body {
   background: #FFFFFF;
   color: #1C1C1E;
   border: 1px solid #E8E6E1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ripple effect */
+.qt-explain-btn::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: rgba(28, 28, 30, 0.1);
+  pointer-events: none;
+  transition: transform 0.5s ease;
+}
+
+.qt-explain-btn:active::after {
+  transform: translate(-50%, -50%) scale(2.5);
+  transition: transform 0s;
 }
 
 .qt-explain-btn:hover:not(:disabled) {
   background: #F2F0EB;
   border-color: #1C1C1E;
+}
+
+.qt-explain-btn:focus {
+  outline: 2px solid #a88f6b;
+  outline-offset: 2px;
 }
 
 .qt-explain-btn:disabled {
@@ -335,7 +406,7 @@ html, body {
   border-color: #1C1C1E;
 }
 
-/* ── Result Box ── */
+/* Result Box */
 .qt-result-box {
   background: #FFFFFF;
   border: 1px solid #E8E6E1;
@@ -355,6 +426,7 @@ html, body {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   resize: vertical;
   position: relative;
+  font-family: 'OpenDyslexic', sans-serif;
 }
 
 .qt-result-box:hover {
@@ -371,7 +443,7 @@ html, body {
   max-height: 60vh;
 }
 
-/* Result section header row */
+/* Result header */
 .qt-result-header {
   display: flex;
   align-items: center;
@@ -411,17 +483,43 @@ html, body {
   transform: scale(1.05);
 }
 
+.qt-icon-btn:focus {
+  outline: 2px solid #a88f6b;
+  outline-offset: 2px;
+}
+
 @keyframes qt-result-in {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0);   }
 }
 
-/* ── Loading — skeleton shimmer ── */
+/* Loading state */
 .qt-loading {
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 16px;
+  align-items: center;
+}
+
+.qt-loading-text {
+  font-size: 13px;
+  color: #6E6E73;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.qt-loading-spinner {
+  display: inline-block;
+  animation: qt-spin 1s linear infinite;
+}
+
+@keyframes qt-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .qt-skeleton {
@@ -430,31 +528,90 @@ html, body {
   background: linear-gradient(90deg, #E8E6E1 25%, #F2F0EB 50%, #E8E6E1 75%);
   background-size: 200% 100%;
   animation: qt-shimmer 1.4s ease-in-out infinite;
+  width: 100%;
 }
 
-.qt-skeleton:nth-child(1) { width: 90%; }
-.qt-skeleton:nth-child(2) { width: 75%; }
-.qt-skeleton:nth-child(3) { width: 82%; }
+.qt-skeleton:nth-child(2) { width: 90%; }
+.qt-skeleton:nth-child(3) { width: 75%; }
+.qt-skeleton:nth-child(4) { width: 82%; }
 
 @keyframes qt-shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
 
-/* ── Numbered list styling for explain results ── */
+/* Success checkmark */
+.qt-success-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: #10b981;
+  animation: qt-check-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes qt-check-pop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
 .qt-list-num {
   font-weight: 700;
   color: #1C1C1E;
 }
 
-/* Fix 5: Bullet point styling */
+/* Bullet styling */
 .qt-list-bullet {
   font-weight: 700;
   color: #1C1C1E;
   margin-right: 4px;
 }
 
-/* ── Error State ── */
+/* Copy toast */
+.qt-copy-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1C1C1E;
+  color: #F2F0EB;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.qt-copy-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.qt-copy-toast.success {
+  background: #2e7d32;
+}
+
+.qt-copy-toast.error {
+  background: #d32f2f;
+}
+
+/* Error State */
 .qt-error {
   margin: 12px 16px;
   padding: 10px 14px;
@@ -465,7 +622,7 @@ html, body {
   color: #C62828;
 }
 
-/* ── Metrics Chart ── */
+/* Metrics Chart */
 .qt-chart-container {
   position: relative;
   width: 100%;
@@ -473,7 +630,7 @@ html, body {
   margin-bottom: 12px;
 }
 
-/* Fix 10: Styled chart error */
+/* Chart error */
 .qt-chart-error {
   display: flex;
   align-items: center;
@@ -485,14 +642,14 @@ html, body {
   border-radius: 8px;
 }
 
-/* ── Metrics Grid ── */
+/* Metrics Grid */
 .qt-metrics-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
-/* Fix 11: Responsive grid for small widths */
+/* Responsive grid */
 @media (max-width: 300px) {
   .qt-metrics-grid {
     grid-template-columns: 1fr;

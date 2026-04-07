@@ -23,6 +23,33 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
+// --- Keyboard Shortcut Handler ---
+chrome.commands.onCommand.addListener((command) => {
+  if (command === 'open-panel') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs[0]) return;
+      
+      // Execute script to get selected text
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        func: () => window.getSelection().toString().trim()
+      }, (results) => {
+        if (chrome.runtime.lastError) {
+          console.warn('QuietText: Could not access page');
+          return;
+        }
+        
+        const selectedText = results && results[0] && results[0].result;
+        // Open panel even if no text selected (will show tip)
+        chrome.tabs.sendMessage(tabs[0].id, {
+          type: 'OPEN_PANEL',
+          text: selectedText || ''
+        }, () => { void chrome.runtime.lastError; });
+      });
+    });
+  }
+});
+
 // --- Message Router ---
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 

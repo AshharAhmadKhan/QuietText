@@ -1,11 +1,8 @@
 // panel.js
-// Controls the floating AI panel.
 
 let originalText   = '';
 let simplifiedText = '';
 let metricsChart   = null;
-
-// ── DOM refs ──
 const originalBox    = document.getElementById('originalText');
 const simplifyBtn    = document.getElementById('simplifyBtn');
 const explainBtn     = document.getElementById('explainBtn');
@@ -20,25 +17,18 @@ const metricsGrid    = document.getElementById('metricsGrid');
 const closeBtn       = document.getElementById('closeBtn');
 const copyBtn        = document.getElementById('copyBtn');
 const expandBtn      = document.getElementById('expandBtn');
-
-// ── Close panel ──
 closeBtn.addEventListener('click', () => {
   window.parent.postMessage({ type: 'CLOSE_PANEL' }, '*');
 });
-
-// ── Drag panel via header (4-dot grip) ──
 const panelHeader = document.querySelector('.qt-panel-header');
 let isDragging = false;
 
 panelHeader.addEventListener('pointerdown', (e) => {
-  // Only drag from header, not from close button
   if (e.target.closest('.qt-close-btn')) return;
   
   isDragging = true;
   panelHeader.style.cursor = 'grabbing';
   document.body.style.userSelect = 'none';
-  
-  // Tell parent to start dragging with initial pointer position
   window.parent.postMessage({
     type: 'START_DRAG',
     mouseX: e.clientX,
@@ -48,8 +38,6 @@ panelHeader.addEventListener('pointerdown', (e) => {
   e.preventDefault();
   e.stopPropagation();
 });
-
-// Listen for DRAG_ENDED message from parent overlay
 window.addEventListener('message', (event) => {
   const msg = event.data;
   if (!msg || typeof msg !== 'object') return;
@@ -60,39 +48,52 @@ window.addEventListener('message', (event) => {
     document.body.style.userSelect = '';
   }
 });
-
-// ── Copy result ──
 copyBtn.addEventListener('click', () => {
-  // Fix 3: Validate empty result
-  if (!simplifiedText || simplifiedText.trim() === '') {
-    showError('Nothing to copy');
+  const textToCopy = resultText.textContent || resultText.innerText || '';
+  if (!textToCopy || textToCopy.trim() === '') {
+    showCopyToast('Nothing to copy', 'error');
     return;
   }
+  const textArea = document.createElement('textarea');
+  textArea.value = textToCopy;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  textArea.style.top = '0';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
   
-  navigator.clipboard.writeText(simplifiedText).then(() => {
-    // Fix 2: Visual feedback for success
-    copyBtn.textContent = '✓';
-    copyBtn.style.color = '#2e7d32';
-    setTimeout(() => {
-      copyBtn.textContent = 'Copy';
-      copyBtn.style.color = '';
-    }, 1500);
-  }).catch(() => {
-    // Fix 2: Visual feedback for failure
-    copyBtn.textContent = 'Failed';
-    copyBtn.style.color = '#d32f2f';
-    setTimeout(() => {
-      copyBtn.textContent = 'Copy';
-      copyBtn.style.color = '';
-    }, 1500);
-  });
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      showCopyToast('✓ Copied to clipboard', 'success');
+    } else {
+      showCopyToast('Copy failed', 'error');
+    }
+  } catch (err) {
+    console.error('Copy failed:', err);
+    showCopyToast('Copy failed', 'error');
+  }
+  
+  document.body.removeChild(textArea);
 });
-
-// ── Expand/collapse result box ──
+function showCopyToast(message, type = 'success') {
+  const existing = document.querySelector('.qt-copy-toast');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = `qt-copy-toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}
 expandBtn.addEventListener('click', () => {
   const expanded = resultText.classList.toggle('qt-expanded');
   expandBtn.textContent = expanded ? '⤡' : '⤢';
-  // Fix 1: Visual feedback for expanded state
   if (expanded) {
     resultText.style.borderColor = '#1C1C1E';
     resultText.style.boxShadow = '0 2px 8px rgba(28, 28, 30, 0.15)';
@@ -101,35 +102,22 @@ expandBtn.addEventListener('click', () => {
     resultText.style.boxShadow = '';
   }
 });
-
-// ── Receive selected text from content.js ──
 window.addEventListener('message', (event) => {
-  // Messages come from the host page's content script — accept any origin
-  // but validate the message structure strictly
   const msg = event.data;
   if (!msg || typeof msg !== 'object') return;
   if (msg.type !== 'INIT_PANEL' && msg.type !== 'PANEL_RESIZED') return;
 
   if (msg.type === 'PANEL_RESIZED') {
-    // Validate dimensions
     if (typeof msg.width !== 'number' || typeof msg.height !== 'number') return;
     if (msg.width <= 0 || msg.height <= 0) return;
-
-    // Force document reflow when container is resized
     document.body.style.width  = msg.width  + 'px';
     document.body.style.height = msg.height + 'px';
-    
-    // Force immediate layout recalculation
     void document.body.offsetHeight;
-    
-    // Force all text boxes to reflow
     const textBoxes = document.querySelectorAll('.qt-original-box, .qt-result-box');
     textBoxes.forEach(box => {
       box.style.width = '100%';
       void box.offsetWidth;
     });
-    
-    // Resize chart if it exists
     if (metricsChart) {
       setTimeout(() => {
         metricsChart.resize();
@@ -140,10 +128,13 @@ window.addEventListener('message', (event) => {
 
   if (msg.type === 'INIT_PANEL') {
     originalText = msg.text || '';
-    originalBox.textContent = originalText;
+    if (!originalText || originalText.trim() === '') {
+      originalBox.innerHTML = '<span class="qt-placeholder">💡 Tip: Select text on any page, then press Ctrl+Shift+Q or right-click → Analyse with QuietText</span>';
+    } else {
+      originalBox.textContent = originalText;
+    }
 
     if (msg.restored) {
-      // Fix 9 & 13: Validate restored data structure
       if (!msg.restored.simplified || typeof msg.restored.simplified !== 'string') {
         showError('Corrupted history data');
         return;
@@ -171,8 +162,6 @@ window.addEventListener('message', (event) => {
     }
   }
 });
-
-// ── Show/hide UI states ──
 let isRequestInProgress = false;
 
 function setLoading(on) {
@@ -182,25 +171,18 @@ function setLoading(on) {
   errorState.style.display   = 'none';
   isRequestInProgress        = on;
 }
-
-// ── Minimal markdown renderer for bullets/steps ──
 function renderText(text, isMarkdown) {
   if (!isMarkdown) {
     resultText.textContent = text;
     return;
   }
-  
-  // Fix 1 & 6: Process bold BEFORE HTML escaping, add bullet support
   let processed = text
     .replace(/\*\*(.+?)\*\*/g, '<<<BOLD_START>>>$1<<<BOLD_END>>>') // Temp markers
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/<<<BOLD_START>>>/g, '<strong>').replace(/<<<BOLD_END>>>/g, '</strong>')
     .replace(/^(\d+)\.\s+/gm, '<span class="qt-list-num">$1.</span> ')
-    // Fix 5: Add bullet point support
     .replace(/^[-•]\s+/gm, '<span class="qt-list-bullet">•</span> ')
     .replace(/\n/g, '<br>');
-  
-  // Fix 7: Use textContent for safety, then replace safe HTML
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = processed;
   resultText.innerHTML = tempDiv.innerHTML;
@@ -208,14 +190,18 @@ function renderText(text, isMarkdown) {
 
 function showResult(text, label, isMarkdown) {
   resultLabel.textContent      = label;
+  const checkmark = document.createElement('div');
+  checkmark.className = 'qt-success-check';
+  checkmark.textContent = '✓';
+  resultSection.appendChild(checkmark);
+  setTimeout(() => checkmark.remove(), 500);
+  
   renderText(text, isMarkdown);
-  // Fix 14: Add animation to result section
   resultSection.style.display  = 'none';
   setTimeout(() => {
     resultSection.style.display  = 'block';
   }, 10);
   loadingState.style.display   = 'none';
-  // Reset expand state
   resultText.classList.remove('qt-expanded');
   resultText.style.borderColor = '';
   resultText.style.boxShadow = '';
@@ -226,13 +212,10 @@ function showError(msg) {
   errorState.textContent     = '⚠ ' + msg;
   errorState.style.display   = 'block';
   loadingState.style.display = 'none';
-  // Fix 13: Auto-dismiss after 5 seconds
   setTimeout(() => {
     errorState.style.display = 'none';
   }, 5000);
 }
-
-// ── Simplify button ──
 simplifyBtn.addEventListener('click', async () => {
   if (!originalText || isRequestInProgress) return;
   if (!chrome.runtime?.id) { showError('Extension was reloaded. Please close and reopen the panel.'); return; }
@@ -263,8 +246,6 @@ simplifyBtn.addEventListener('click', async () => {
     showError('Extension was reloaded. Please close and reopen the panel.');
   }
 });
-
-// ── Explain button ──
 explainBtn.addEventListener('click', async () => {
   if (!originalText || isRequestInProgress) return;
   if (!chrome.runtime?.id) { showError('Extension was reloaded. Please close and reopen the panel.'); return; }
@@ -279,8 +260,6 @@ explainBtn.addEventListener('click', async () => {
         return;
       }
       if (response.error) { showError(response.error); return; }
-
-      // bullets and steps may contain markdown-style formatting
       const isMarkdown = style === 'bullets' || style === 'steps';
       const labelMap   = { plain: 'Explanation', bullets: 'Key Points', steps: 'Step by Step' };
       simplifiedText   = response.result;
@@ -291,11 +270,8 @@ explainBtn.addEventListener('click', async () => {
     showError('Extension was reloaded. Please close and reopen the panel.');
   }
 });
-
-// ── Draw Chart.js grouped bar chart ──
 function drawChart(before, after) {
   const container = document.getElementById('metricsChart').parentElement;
-  // Fix 8: Set explicit height before creating chart
   container.style.height = '180px';
   
   const ctx = document.getElementById('metricsChart').getContext('2d');
@@ -339,12 +315,9 @@ function drawChart(before, after) {
     });
   } catch (err) {
     console.error('Chart initialization failed:', err);
-    // Fix 10: Styled error fallback
     container.innerHTML = '<div class="qt-chart-error">Chart unavailable</div>';
   }
 }
-
-// ── Metrics grid ──
 function showMetricsGrid(before, after) {
   const metrics = [
     { label: 'Readability Score',   b: before.readabilityScore,  a: after.readabilityScore  },

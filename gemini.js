@@ -78,27 +78,32 @@ async function callGemini(systemPrompt, userText, apiKey) {
   }
 }
 
-// Prompt templates — unchanged
+// Prompt templates
 const PROMPTS = {
   simplify: `You are a reading assistant for people with dyslexia.
-Rewrite the following text so it is much easier to read.
-Use short sentences. Use simple, common words.
-Keep every important idea from the original.
-Do not remove facts. Do not add new information.
+Rewrite the following text to make it much easier to read.
+Use short sentences (under 15 words each). Use simple, common words.
+Break long paragraphs into shorter ones.
+Keep every important idea and fact from the original.
+Do not add new information or opinions.
 Write for an adult. Do not be condescending or childish.
-Return only the rewritten text. No preamble.`,
+Return only the rewritten text. No preamble or explanation.`,
 
   explainPlain: `You are a patient reading tutor.
-Explain the following passage in simple, clear prose.
-Write as if you are explaining to a thoughtful adult who is unfamiliar with the topic.
+Explain the following passage in simple, clear language.
+Imagine you're explaining to an intelligent adult who is unfamiliar with the topic.
+Use short sentences and everyday words.
 Keep the explanation under 120 words.
-Return only the explanation.`,
+Return only the explanation. No introduction.`,
 
-  explainBullets: `Extract the 4 to 6 key points from the following text.
-Return them as a simple numbered list.
-Each point should be one short sentence. No introduction needed.`,
+  explainBullets: `Extract the main points from the following text.
+Return them as a numbered list (aim for 4-6 points, but use fewer if the text is short).
+Each point should be one clear sentence using simple words.
+No introduction or conclusion needed.`,
 
   explainSteps: `Break down the following text into a step-by-step explanation.
-Number each step. Keep each step to one or two sentences.
-Write for someone reading this for the first time.`
+Number each step (1, 2, 3...).
+Keep each step to one or two short sentences using simple words.
+Write as if explaining to someone reading this for the first time.
+Return only the numbered steps.`
 };

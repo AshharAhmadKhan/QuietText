@@ -5,12 +5,12 @@
 const HISTORY_KEY = 'quiettext_history';
 const MAX_ENTRIES = 5;
 
-// Fix 1: Mutex to prevent concurrent saves
+// Mutex to prevent concurrent saves
 let saveLock = false;
 const saveQueue = [];
 
 function saveResult(entry) {
-  // Fix 4: Validate entry before saving
+  // Validate entry before saving
   if (!entry || typeof entry !== 'object') {
     console.error('QuietText: Invalid entry object');
     return;
