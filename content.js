@@ -442,3 +442,96 @@ function restorePreset() {
 // Initialize
 injectFonts();
 restorePreset();
+
+// Highlight tooltip
+(function initHighlightTooltip() {
+  let debounceTimer = null;
+  let tooltip = null;
+
+  function removeTooltip() {
+    if (tooltip) {
+      tooltip.remove();
+      tooltip = null;
+    }
+  }
+
+  function createTooltip(x, y) {
+    removeTooltip();
+    tooltip = document.createElement('div');
+    tooltip.className = 'qt-highlight-tooltip';
+    tooltip.style.left = x + 'px';
+    tooltip.style.top  = y + 'px';
+    tooltip.innerHTML  = `
+      <div class="qt-highlight-tooltip-text">
+        <div class="qt-tooltip-loading">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="qt-highlight-tooltip-footer">💡 Use QuietText panel for detailed analysis</div>
+    `;
+    document.body.appendChild(tooltip);
+    return tooltip;
+  }
+
+  function positionTooltip(rect) {
+    const x = Math.min(
+      rect.left + window.scrollX,
+      window.innerWidth + window.scrollX - 380
+    );
+    const y = rect.bottom + window.scrollY + 10;
+    return { x: Math.max(8, x), y };
+  }
+
+  document.addEventListener('mouseup', () => {
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+      const selection = window.getSelection();
+      const text = selection && selection.toString().trim();
+
+      // Ignore if too short, inside our panel, or extension not alive
+      if (!text || text.length < 5) { removeTooltip(); return; }
+      if (!chrome.runtime?.id)       { removeTooltip(); return; }
+
+      const range = selection.getRangeAt(0);
+      const rect  = range.getBoundingClientRect();
+
+      // Don't trigger inside the QuietText panel itself
+      const panelContainer = document.getElementById('qt-panel-container');
+      if (panelContainer && panelContainer.contains(range.commonAncestorContainer)) {
+        return;
+      }
+
+      const { x, y } = positionTooltip(rect);
+      createTooltip(x, y);
+
+      chrome.runtime.sendMessage({ type: 'EXPLAIN_HIGHLIGHT', text }, (response) => {
+        if (!tooltip) return; // tooltip was dismissed already
+        if (chrome.runtime.lastError || !response) {
+          removeTooltip();
+          return;
+        }
+        if (response.error) {
+          removeTooltip();
+          return;
+        }
+        const textDiv = tooltip.querySelector('.qt-highlight-tooltip-text');
+        if (textDiv) textDiv.textContent = response.result;
+      });
+    }, 2000);
+  });
+
+  // Dismiss on click anywhere or selection cleared
+  document.addEventListener('mousedown', (e) => {
+    clearTimeout(debounceTimer);
+    if (tooltip && !tooltip.contains(e.target)) removeTooltip();
+  });
+
+  document.addEventListener('selectionchange', () => {
+    const text = window.getSelection().toString().trim();
+    if (!text) {
+      clearTimeout(debounceTimer);
+      removeTooltip();
+    }
+  });
+})();

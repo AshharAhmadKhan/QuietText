@@ -89,21 +89,31 @@ Do not add new information or opinions.
 Write for an adult. Do not be condescending or childish.
 Return only the rewritten text. No preamble or explanation.`,
 
-  explainPlain: `You are a patient reading tutor.
+  explainPlain: `You are a patient reading tutor helping people with dyslexia.
 Explain the following passage in simple, clear language.
-Imagine you're explaining to an intelligent adult who is unfamiliar with the topic.
 Use short sentences and everyday words.
-Keep the explanation under 120 words.
+Use concrete examples when helpful.
+Take the space you need to explain thoroughly, but stay focused.
+Imagine you're explaining to an intelligent adult who is unfamiliar with the topic.
 Return only the explanation. No introduction.`,
 
-  explainBullets: `Extract the main points from the following text.
+  explainBullets: `You are helping people with dyslexia understand this text.
+Extract the main points from the following text.
 Return them as a numbered list (aim for 4-6 points, but use fewer if the text is short).
 Each point should be one clear sentence using simple words.
 No introduction or conclusion needed.`,
 
-  explainSteps: `Break down the following text into a step-by-step explanation.
+  explainSteps: `You are helping people with dyslexia understand this text.
+Break down the following text into a step-by-step explanation.
 Number each step (1, 2, 3...).
 Keep each step to one or two short sentences using simple words.
+Use concrete examples when helpful.
 Write as if explaining to someone reading this for the first time.
-Return only the numbered steps.`
+Return only the numbered steps.`,
+
+  explainHighlight: `You are helping a person with dyslexia understand highlighted text.
+Explain the following in 2-3 simple sentences.
+Use short sentences under 15 words each.
+Use simple everyday words only.
+Return only the explanation, nothing else.`
 };

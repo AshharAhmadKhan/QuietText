@@ -116,6 +116,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  // Explain highlight — called from content.js when user highlights text
+  if (message.type === 'EXPLAIN_HIGHLIGHT') {
+    (async () => {
+      try {
+        const data = await chrome.storage.local.get(['gemini_api_key']);
+        const apiKey = data.gemini_api_key || null;
+        const result = await callGemini(PROMPTS.explainHighlight, message.text, apiKey);
+        sendResponse({ result });
+      } catch (e) {
+        sendResponse({ error: e.message });
+      }
+    })().catch(err => console.error('EXPLAIN_HIGHLIGHT error:', err));
+    return true;
+  }
+
   // Unknown message type
   console.warn('Unknown message type:', message.type);
 
