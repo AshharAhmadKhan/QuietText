@@ -6,16 +6,19 @@ This is my BTech CSE 6th semester minor project at Jamia Hamdard University.
 
 ## What it does
 
-QuietText helps you read better in two ways:
+QuietText helps you read better in three ways:
 
 1. **Reading Presets** - Apply dyslexia-friendly fonts and spacing to any webpage. Choose from Mild, Comfort, or Focus modes.
 
 2. **AI Simplification** - Select any text, and I'll simplify it using AI. You can also get explanations in plain language, bullet points, or step-by-step breakdowns.
 
+3. **Smart Highlight** - Highlight any confusing text and wait 2 seconds. A tooltip automatically appears with a quick 2-3 sentence explanation. No buttons to click, just highlight and learn.
+
 ## Features I built
 
 - Three reading presets with OpenDyslexic font
 - AI text simplification using Groq API
+- Smart highlight tooltip - automatic explanations when you highlight text
 - Floating panel that you can drag and resize
 - History of your last 5 simplifications
 - Keyboard shortcut (Ctrl+Shift+Q) to open the panel
@@ -56,6 +59,12 @@ That's it! Now you can simplify any text on the web.
 - Press Ctrl+Shift+Q (or right-click → Analyse with QuietText)
 - Click Simplify or Explain
 - Done!
+
+**For smart highlight:**
+- Highlight any confusing text on a webpage
+- Hold the selection for 2 seconds
+- A tooltip automatically appears with a quick explanation
+- The tooltip uses OpenDyslexic font for easy reading
 
 ## Why I built this
 
