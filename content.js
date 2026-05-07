@@ -248,23 +248,6 @@ function injectPanel(selectedText, restored) {
     </svg>
   `;
   
-  // Add pulsing animation style
-  if (!document.getElementById('qt-resize-animation')) {
-    const style = document.createElement('style');
-    style.id = 'qt-resize-animation';
-    style.textContent = `
-      @keyframes qt-resize-pulse {
-        0%, 100% {
-          box-shadow: 0 0 0 0 rgba(28, 28, 30, 0.4);
-        }
-        50% {
-          box-shadow: 0 0 12px 4px rgba(28, 28, 30, 0.2);
-        }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-  
   resizeHandle.addEventListener('mouseenter', () => {
     resizeHandle.style.background = 'linear-gradient(135deg, rgba(28, 28, 30, 0.3), rgba(110, 110, 115, 0.15))';
     resizeHandle.style.boxShadow = '0 0 16px 6px rgba(28, 28, 30, 0.3)';
@@ -277,7 +260,7 @@ function injectPanel(selectedText, restored) {
   });
 
   let resizing = false;
-  let resizeStartX = 0, resizeStartY = 0, origW = 0, origH = 0, resizeOrigRight = 0;
+  let resizeStartX = 0, resizeStartY = 0, origW = 0, origH = 0;
 
   resizeHandle.addEventListener('mousedown', (e) => {
     resizing     = true;
@@ -285,8 +268,6 @@ function injectPanel(selectedText, restored) {
     resizeStartY = e.clientY;
     origW        = container.offsetWidth;
     origH        = container.offsetHeight;
-    const rect   = container.getBoundingClientRect();
-    resizeOrigRight = window.innerWidth - rect.right;
     e.stopPropagation();
     e.preventDefault();
   }, { signal: sig });
@@ -411,7 +392,6 @@ function injectFonts() {
     `;
     document.head.appendChild(qtFontStyle);
     document.body.setAttribute('data-qt-fonts-ready', 'true');
-    console.log('Font styles injected successfully');
   } catch (err) {
     console.error('QuietText: Font injection failed:', err);
   }
@@ -442,6 +422,23 @@ function restorePreset() {
 // Initialize
 injectFonts();
 restorePreset();
+
+// Add resize animation style once
+if (!document.getElementById('qt-resize-animation')) {
+  const style = document.createElement('style');
+  style.id = 'qt-resize-animation';
+  style.textContent = `
+    @keyframes qt-resize-pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(28, 28, 30, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 12px 4px rgba(28, 28, 30, 0.2);
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 // Highlight tooltip
 (function initHighlightTooltip() {

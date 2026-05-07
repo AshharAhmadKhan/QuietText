@@ -1,4 +1,4 @@
-// gemini.js
+// groq.js
 // Single module that handles the fetch call to Groq API (OpenAI-compatible).
 // Called only from background.js. No backend. No proxy.
 
@@ -8,7 +8,7 @@ const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 // Get a free key at: https://console.groq.com
 const DEFAULT_API_KEY = ''; // Enter your API key here
 
-async function callGemini(systemPrompt, userText, apiKey) {
+async function callGroq(systemPrompt, userText, apiKey) {
   const key = apiKey || DEFAULT_API_KEY;
   
   if (!key) {

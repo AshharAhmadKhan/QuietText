@@ -2,7 +2,7 @@
 // Service worker. Handles context menu and all Groq API calls.
 // Cannot access DOM. Communicates with content/panel via chrome.runtime messages.
 
-importScripts("gemini.js");
+importScripts("groq.js");
 
 // --- Context Menu Setup ---
 chrome.runtime.onInstalled.addListener(() => {
@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   // API key save
   if (message.type === 'SAVE_API_KEY') {
-    chrome.storage.local.set({ gemini_api_key: message.key }, () => {
+    chrome.storage.local.set({ groq_api_key: message.key }, () => {
       sendResponse({ success: true });
     });
     return true;
@@ -71,8 +71,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'GET_API_KEY') {
     (async () => {
       try {
-        const data = await chrome.storage.local.get(['gemini_api_key']);
-        sendResponse({ key: data.gemini_api_key || null });
+        const data = await chrome.storage.local.get(['groq_api_key']);
+        sendResponse({ key: data.groq_api_key || null });
       } catch (e) {
         sendResponse({ key: null });
       }
@@ -80,13 +80,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  // Simplify — always call callGemini, let gemini.js handle DEFAULT_API_KEY fallback
+  // Simplify — always call callGroq, let groq.js handle DEFAULT_API_KEY fallback
   if (message.type === 'SIMPLIFY') {
     (async () => {
       try {
-        const data = await chrome.storage.local.get(['gemini_api_key']);
-        const apiKey = data.gemini_api_key || null;
-        const result = await callGemini(PROMPTS.simplify, message.text, apiKey);
+        const data = await chrome.storage.local.get(['groq_api_key']);
+        const apiKey = data.groq_api_key || null;
+        const result = await callGroq(PROMPTS.simplify, message.text, apiKey);
         sendResponse({ result });
       } catch (e) {
         sendResponse({ error: e.message });
@@ -95,7 +95,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  // Explain — always call callGemini, let gemini.js handle DEFAULT_API_KEY fallback
+  // Explain — always call callGroq, let groq.js handle DEFAULT_API_KEY fallback
   if (message.type === 'EXPLAIN') {
     const styleMap = {
       plain:   PROMPTS.explainPlain,
@@ -104,10 +104,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     };
     (async () => {
       try {
-        const data = await chrome.storage.local.get(['gemini_api_key']);
-        const apiKey = data.gemini_api_key || null;
+        const data = await chrome.storage.local.get(['groq_api_key']);
+        const apiKey = data.groq_api_key || null;
         const prompt = styleMap[message.style] || PROMPTS.explainPlain;
-        const result = await callGemini(prompt, message.text, apiKey);
+        const result = await callGroq(prompt, message.text, apiKey);
         sendResponse({ result });
       } catch (e) {
         sendResponse({ error: e.message });
@@ -120,9 +120,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'EXPLAIN_HIGHLIGHT') {
     (async () => {
       try {
-        const data = await chrome.storage.local.get(['gemini_api_key']);
-        const apiKey = data.gemini_api_key || null;
-        const result = await callGemini(PROMPTS.explainHighlight, message.text, apiKey);
+        const data = await chrome.storage.local.get(['groq_api_key']);
+        const apiKey = data.groq_api_key || null;
+        const result = await callGroq(PROMPTS.explainHighlight, message.text, apiKey);
         sendResponse({ result });
       } catch (e) {
         sendResponse({ error: e.message });

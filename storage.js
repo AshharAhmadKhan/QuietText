@@ -84,19 +84,4 @@ function processQueue() {
   }
 }
 
-function getHistory(callback) {
-  chrome.storage.local.get([HISTORY_KEY], (data) => {
-    callback(data[HISTORY_KEY] || []);
-  });
-}
-
-function clearHistory(callback) {
-  chrome.storage.local.remove([HISTORY_KEY], () => {
-    if (callback) callback();
-  });
-}
-
-// Export for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { HISTORY_KEY, saveResult, getHistory, clearHistory };
-}
+// Functions available globally in browser context

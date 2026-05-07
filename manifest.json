@@ -3,8 +3,8 @@
   "name": "QuietText",
   "version": "1.0",
   "description": "AI-powered reading assistant that simplifies complex text and provides dyslexia-friendly formatting for easier comprehension.",
-  "permissions": ["storage", "contextMenus", "activeTab", "scripting"],
-  "host_permissions": ["https://generativelanguage.googleapis.com/*", "https://api.groq.com/*"],
+  "permissions": ["storage", "contextMenus", "activeTab", "scripting", "tabs"],
+  "host_permissions": ["https://api.groq.com/*"],
   "background": {
     "service_worker": "background.js"
   },

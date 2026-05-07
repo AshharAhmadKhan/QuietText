@@ -1,0 +1,24 @@
+{
+  "name": "quiettext",
+  "version": "1.0.0",
+  "description": "AI-powered reading assistant that simplifies complex text and provides dyslexia-friendly formatting for easier comprehension",
+  "author": "Ashhar Ahmad Khan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/quiettext.git"
+  },
+  "keywords": [
+    "dyslexia",
+    "accessibility",
+    "reading-assistant",
+    "chrome-extension",
+    "ai",
+    "text-simplification"
+  ],
+  "scripts": {
+    "lint": "echo 'No linter configured yet'",
+    "test": "echo 'No tests configured yet'",
+    "build": "echo 'No build process needed - extension runs directly'"
+  }
+}

@@ -64,6 +64,3 @@ function calculateMetrics(text) {
     readingTime:       getReadingTime(words)
   };
 }
-
-// Export for use in panel.js
-if (typeof module !== 'undefined') module.exports = { calculateMetrics };

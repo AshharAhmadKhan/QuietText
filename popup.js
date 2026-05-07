@@ -225,9 +225,9 @@ function showError(msg) {
 
 
 function updateApiKeyStatus() {
-  chrome.storage.local.get(['gemini_api_key'], (data) => {
+  chrome.storage.local.get(['groq_api_key'], (data) => {
     const status = document.getElementById('keyStatus');
-    if (data.gemini_api_key) {
+    if (data.groq_api_key) {
       status.innerHTML   = '✓ API key is set. <a href="#" id="removeKeyLink" style="color:#6E6E73;margin-left:6px;">Remove</a>';
       status.style.color = '#1C1C1E';
       wireRemoveKey();
@@ -274,7 +274,7 @@ function saveApiKey() {
 }
 
 function removeApiKey() {
-  chrome.storage.local.remove(['gemini_api_key'], () => {
+  chrome.storage.local.remove(['groq_api_key'], () => {
     const status = document.getElementById('keyStatus');
     status.textContent = 'Key removed.';
     status.style.color = '#6E6E73';
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 3500);
 
 
-  chrome.storage.local.get(['qt_active_preset', 'gemini_api_key', 'qt_popup_minimized', 'qt_first_use'], (data) => {
+  chrome.storage.local.get(['qt_active_preset', 'groq_api_key', 'qt_popup_minimized', 'qt_first_use'], (data) => {
     if (data.qt_popup_minimized) {
       document.body.classList.add('qt-minimized');
       document.getElementById('minimizeBtn').textContent = '⊕';
@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePresetUI(activePreset);
       }
     });
-    if (data.gemini_api_key) {
+    if (data.groq_api_key) {
       const status = document.getElementById('keyStatus');
       status.innerHTML   = '✓ API key is set. <a href="#" id="removeKeyLink" style="color:#6E6E73;margin-left:6px;">Remove</a>';
       status.style.color = '#1C1C1E';
@@ -420,5 +420,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('beforeunload', () => {
     if (presetDebounceTimer) clearTimeout(presetDebounceTimer);
+    if (loadHistoryDebounceTimer) clearTimeout(loadHistoryDebounceTimer);
   });
 });
